@@ -1,6 +1,6 @@
 ﻿namespace api_cinema_challenge.Models
 {
-    public class Screeing
+    public class Screening
     {
         public int Id { get; set; }
         public int MovieId {  get; set; }
