@@ -1,14 +1,11 @@
-﻿namespace api_cinema_challenge.Models
+﻿namespace api_cinema_challenge.ViewModels
 {
-    public class Ticket
+    public class GetTicket
     {
         public int ScreeningId { get; set; }
         public int CustomerId { get; set; }
         public int numSeats { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
-        public Customer Customer { get; set; }
-        public Screening Screening { get; set; }
-
     }
 }

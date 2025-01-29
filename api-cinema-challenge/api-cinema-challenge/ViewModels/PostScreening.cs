@@ -2,7 +2,6 @@
 {
     public class PostScreening
     {
-        public int MovieId { get; set; }
         public int ScreenNumber { get; set; }
         public int Capacity { get; set; }
         public DateTime StartsAt { get; set; }

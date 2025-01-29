@@ -16,8 +16,17 @@ namespace api_cinema_challenge.Repositories
 
 
         // Customers
-        public async Task<Customer> CreateCustomer(Customer customer)
+        public async Task<Customer> CreateCustomer(PostCustomer postcustomer)
         {
+            Customer customer = new Customer()
+            {
+                Name = postcustomer.Name,
+                Phone = postcustomer.Phone,
+                Email = postcustomer.Email,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow,
+            };
+
             await _db.Customers.AddAsync(customer);
             await _db.SaveChangesAsync();
 
@@ -27,25 +36,27 @@ namespace api_cinema_challenge.Repositories
         {
             return await _db.Customers.ToListAsync();
         }
-        public async Task<Customer> UpdateCustomer(int id, PostCustomer postCustomer)
+        public async Task<Customer> UpdateCustomer(int id, PutCustomer putCustomer)
         {
             Customer costumerToUpdate = await _db.Customers.FirstAsync(x => x.Id == id);
             var entity = _db.Customers.Update(costumerToUpdate).Entity;
 
-            if(postCustomer.Name != null)
+            if(putCustomer.Name != null)
             {
-                entity.Name = postCustomer.Name;
+                entity.Name = putCustomer.Name;
             }
 
-            if(postCustomer.Email != null)
+            if(putCustomer.Email != null)
             {
-                entity.Email = postCustomer.Email;
+                entity.Email = putCustomer.Email;
             }
 
-            if (postCustomer.Phone != null)
+            if (putCustomer.Phone != null)
             {
-                entity.Phone = postCustomer.Phone;
+                entity.Phone = putCustomer.Phone;
             }
+
+            entity.UpdatedAt = DateTime.UtcNow;
 
             await _db.SaveChangesAsync();
 
@@ -62,8 +73,19 @@ namespace api_cinema_challenge.Repositories
 
 
         // Movies
-        public async Task<Movie> CreateMovie(Movie movie)
+        public async Task<Movie> CreateMovie(PostMovie postMovie)
         {
+            Movie movie = new Movie()
+            {
+                Title = postMovie.Title,
+                Rating = postMovie.Rating,
+                Description = postMovie.Description,
+                RunTimeMins = postMovie.RunTimeMins,
+                Screenings = postMovie.Screenings,
+                UpdatedAt = DateTime.UtcNow,
+                CreatedAt = DateTime.UtcNow,
+            };
+
             await _db.Movies.AddAsync(movie);
             await _db.SaveChangesAsync();
 
@@ -73,30 +95,32 @@ namespace api_cinema_challenge.Repositories
         {
             return await _db.Movies.ToListAsync();
         }
-        public async Task<Movie> UpdateMovie(int id, PostMovie postMovie)
+        public async Task<Movie> UpdateMovie(int id, PutMovie putMovie)
         {
             Movie movieToUpdate = await _db.Movies.FirstOrDefaultAsync(x => x.Id==id);
             var entity =  _db.Movies.Update(movieToUpdate).Entity;
 
-            if(postMovie.Title != null)
+            if(putMovie.Title != null)
             { 
-                entity.Title = postMovie.Title; 
+                entity.Title = putMovie.Title; 
             }
 
-            if(postMovie.Description != null) 
+            if(putMovie.Description != null) 
             { 
-                entity.Description = postMovie.Description; 
+                entity.Description = putMovie.Description; 
             }
 
-            if(postMovie.Rating != null)
+            if(putMovie.Rating != null)
             {
-                entity.Rating = (int)postMovie.Rating;
+                entity.Rating = putMovie.Rating;
             }
 
-            if (postMovie.RunTimeMins != null)
+            if (putMovie.RunTimeMins != null)
             {
-                entity.RunTimeMins = (int)postMovie.RunTimeMins;
+                entity.RunTimeMins = (int)putMovie.RunTimeMins;
             }
+
+            entity.UpdatedAt = DateTime.UtcNow;
 
             await _db.SaveChangesAsync();
 
@@ -113,16 +137,16 @@ namespace api_cinema_challenge.Repositories
 
 
         // Screenings
-        public async Task<Screening> CreateScreening(PostScreening postScreening)
+        public async Task<Screening> CreateScreening(PostScreening postScreening, int movieId)
         {
             Screening screening = new Screening()
             {
-                MovieId = postScreening.MovieId,
+                MovieId = movieId,
                 ScreenNumber = postScreening.ScreenNumber,
                 Capacity = postScreening.Capacity,
                 StartsAt = postScreening.StartsAt,
-                CreatedAt = DateTime.Now,
-                UpdatedAt = DateTime.Now,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow,
             };
 
             await _db.Screenings.AddAsync(screening);
@@ -130,9 +154,32 @@ namespace api_cinema_challenge.Repositories
 
             return screening;
         }
-        public async Task<IEnumerable<Screening>> GetScreeings(int movieId)
+        public async Task<IEnumerable<Screening>> GetScreenings(int movieId)
         {
-            return await _db.Screenings.ToListAsync();
+            return await _db.Screenings.Where(x => x.MovieId == movieId).ToListAsync();
+        }
+
+        // Tickets
+        public async Task<Ticket> BookATicket(PostTicket postTicket)
+        {
+            Ticket ticket = new Ticket()
+            {
+                numSeats = postTicket.numSeats,
+                CustomerId = postTicket.CustomerId,
+                ScreeningId = postTicket.ScreeningId,
+                UpdatedAt= DateTime.UtcNow,
+                CreatedAt= DateTime.UtcNow,
+            };
+
+            await _db.Tickets.AddAsync(ticket);
+            await _db.SaveChangesAsync();
+
+            return ticket;
+        }
+
+        public async Task<IEnumerable<Ticket>> GetTickets()
+        {
+            return await _db.Tickets.ToListAsync();
         }
     }
 }
